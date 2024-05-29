@@ -2,7 +2,7 @@
 
 //디렉토리 생성 함수
 void make_dir(char *DirName, char Type, TreeNode *parent, DirectTree *dirtree,
-              Users *usertree) {
+              Users *usertree, int permission) {
   TreeNode *tempNode = Find_Dir(DirName, Type, dirtree);
   TreeNode *new = (TreeNode *)malloc(sizeof(TreeNode));
 
@@ -68,8 +68,28 @@ void make_dir(char *DirName, char Type, TreeNode *parent, DirectTree *dirtree,
   new->Hour = t->tm_hour;
   new->Minute = t->tm_min;
 
-  int newPer[9] = {1, 1, 1, 1, 0, 1, 1, 0, 1};
-  memcpy(new->permission, newPer, sizeof(newPer));
+  if (permission != -1) {
+    int ownerPerm = permission / 0100 % 010;
+    int groupPerm = permission / 010 % 010;
+    int othersPerm = permission % 010;
+
+    // 각 권한을 크기가 9인 배열로 변환
+    new->permission[0] = ownerPerm / 4 % 2; // 소유자 읽기 권한
+    new->permission[1] = ownerPerm / 2 % 2; // 소유자 쓰기 권한
+    new->permission[2] = ownerPerm % 2;     // 소유자 실행 권한
+
+    new->permission[3] = groupPerm / 4 % 2; // 그룹 읽기 권한
+    new->permission[4] = groupPerm / 2 % 2; // 그룹 쓰기 권한
+    new->permission[5] = groupPerm % 2;     // 그룹 실행 권한
+
+    new->permission[6] = othersPerm / 4 % 2; // 기타 사용자 읽기 권한
+    new->permission[7] = othersPerm / 2 % 2; // 기타 사용자 쓰기 권한
+    new->permission[8] = othersPerm % 2;     // 기타 사용자 실행 권한
+
+  } else {
+    int newPer[9] = {1, 1, 1, 1, 0, 1, 1, 0, 1};
+    memcpy(new->permission, newPer, sizeof(newPer));
+  }
 
   return;
 }
@@ -114,7 +134,7 @@ void mkdir(char *path, DirectTree *dirtree, Users *usertree) {
 
           if (tempNode == NULL) {
             while (!(part == NULL)) {
-              make_dir(part, 'd', parent, dirtree, usertree);
+              make_dir(part, 'd', parent, dirtree, usertree, -1);
               part = strtok(NULL, "/");
 
               parent = parent->child;
@@ -134,12 +154,23 @@ void mkdir(char *path, DirectTree *dirtree, Users *usertree) {
         TreeNode *tmpNode = dirtree->current;
         part = strtok(route, "/");
         while (!(part == NULL)) {
-          make_dir(part, 'd', tmpNode, dirtree, usertree);
+          make_dir(part, 'd', tmpNode, dirtree, usertree, -1);
           tmpNode = tmpNode->child;
           while (!(tmpNode->sib == NULL)) {
             tmpNode = tmpNode->sib;
           }
           part = strtok(NULL, "/");
+        }
+      }
+    }
+    //-m 구현
+    else if (!(part == NULL) && strcmp(part, "-m") == 0) {
+      char *part = strtok(NULL, " ");
+      if (!(part == NULL)) {
+        int permission = strtol(part, NULL, 8); // int로 변경
+        part = strtok(NULL, " ");
+        if (!(part == NULL)) {
+          make_dir(part, 'd', dirtree->current, dirtree, usertree, permission);
         }
       }
     } else {
@@ -156,7 +187,7 @@ void mkdir(char *path, DirectTree *dirtree, Users *usertree) {
       temp[0] = '\0';
       dirName = temp + 1;
       TreeNode *parent = Find_Dir(pathCopy, 'd', dirtree);
-      make_dir(dirName, 'd', parent, dirtree, usertree);
+      make_dir(dirName, 'd', parent, dirtree, usertree, -1);
     } else {
       dirName = pathCopy;
       char *part;
@@ -166,7 +197,7 @@ void mkdir(char *path, DirectTree *dirtree, Users *usertree) {
         printf("/ is Invalid Directory Name\n");
         return;
       }
-      make_dir(dirName, 'd', dirtree->current, dirtree, usertree);
+      make_dir(dirName, 'd', dirtree->current, dirtree, usertree, -1);
     }
   }
 

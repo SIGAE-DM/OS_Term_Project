@@ -6,6 +6,6 @@
 #include <string.h>
 #include <time.h>
 
-int Permission(TreeNode *node, Users *users, char autho);
+int Permission(TreeNode *node, Users *user, char autho);
 
 #endif

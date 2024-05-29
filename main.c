@@ -5,7 +5,7 @@ int main() {
   char input_command[100];
   Users *userlist = Initial();
   DirectTree *dirtree = NULL;
-  dirtree = Load_Directory_Info(userlist, "Directory.txt", "Data.txt");
+  dirtree = LoadTree(userlist, "Directory.txt", "Data.txt");
   if (dirtree == NULL) {
     dirtree = Initial_Dir(userlist);
   }
@@ -39,7 +39,7 @@ int main() {
     } else if (strcmp(command, "ls") == 0) {
       ls(argument, dirtree, userlist);
     } else if (strcmp(command, "cd") == 0) {
-      cd(argument, dirtree, userlist);
+      cd(argument, dirtree);
     } else if (strcmp(command, "touch") == 0) {
       touch(argument, dirtree);
     } else if (strcmp(command, "rmdir") == 0) {
@@ -50,7 +50,8 @@ int main() {
         arg_array[num++] = arg;
         argument = NULL;
       }
-      multi_rmdir(arg_array, num, dirtree, userlist);
+
+      multiThreadRmdir(arg_array, num, dirtree, userlist);
     }
 
     else if (strcmp(command, "grep") == 0) {
@@ -61,8 +62,6 @@ int main() {
       tail(argument, dirtree, userlist);
     } else if (strcmp(command, "cp") == 0) {
       cp(argument, dirtree, userlist);
-    } else if (strcmp(command, "chown") == 0) {
-      chown(argument, dirtree, userlist);
     } else if (strcmp(command, "chmod") == 0) {
       chmod(dirtree, argument);
     } else if (strcmp(command, "cat") == 0) {

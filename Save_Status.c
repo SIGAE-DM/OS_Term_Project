@@ -1,13 +1,11 @@
 #include "Save_Status.h"
 
 // 디렉토리 정보를 로컬 파일에 저장하는 함수
-void Save_Directory_Info(DirectTree *dirtree, char *directoryFilename,
-                         char *dataFilename) {
+void SaveTreeFile(DirectTree *dirtree, char *dirFilename, char *dataFilename) {
   // 디렉토리 정보를 저장할 파일 열기
-  FILE *dirFile = fopen(directoryFilename, "w");
+  FILE *dirFile = fopen(dirFilename, "w");
   if (dirFile == NULL) {
-    printf("Failed to open directory file for writing: %s\n",
-           directoryFilename);
+    printf("Failed to open directory file for writing: %s\n", dirFilename);
     return;
   }
 
@@ -20,7 +18,7 @@ void Save_Directory_Info(DirectTree *dirtree, char *directoryFilename,
   }
 
   // 현재 디렉토리부터 순회하며 정보 저장
-  Save_Directory_Info_Helper(dirtree->current, dirFile, dataFile);
+  SaveTreeFile_Serve(dirtree->current, dirFile, dataFile);
 
   // 파일 닫기
   fclose(dirFile);
@@ -28,7 +26,7 @@ void Save_Directory_Info(DirectTree *dirtree, char *directoryFilename,
 }
 
 // 디렉토리 정보를 로컬 파일에 저장하는 보조 함수
-void Save_Directory_Info_Helper(TreeNode *node, FILE *dirFile, FILE *dataFile) {
+void SaveTreeFile_Serve(TreeNode *node, FILE *dirFile, FILE *dataFile) {
   // NULL 이면 -1을 기록
   if (node == NULL) {
     fprintf(dirFile, "%d ", -100);
@@ -51,16 +49,16 @@ void Save_Directory_Info_Helper(TreeNode *node, FILE *dirFile, FILE *dataFile) {
     fprintf(dataFile, "%s", "!_!End Of File!_!\n");
 
     // 자식 노드들에 대해 재귀 호출
-    Save_Directory_Info_Helper(node->child, dirFile, dataFile);
-    Save_Directory_Info_Helper(node->sib, dirFile, dataFile);
+    SaveTreeFile_Serve(node->child, dirFile, dataFile);
+    SaveTreeFile_Serve(node->sib, dirFile, dataFile);
   }
   return;
 }
 
 // 디렉토리 정보를 복원하는 함수
-DirectTree *Load_Directory_Info(Users *users, char *dirFilename,
-                                char *dataFilename) {
-  FILE *dirFile = fopen(dirFilename, "r");
+DirectTree *LoadTree(Users *users, char *directoryFilename,
+                     char *dataFilename) {
+  FILE *dirFile = fopen(directoryFilename, "r");
   FILE *dataFile = fopen(dataFilename, "r");
   if (dirFile == NULL || dataFile == NULL) {
     // printf("Failed to open files\n");
@@ -68,7 +66,7 @@ DirectTree *Load_Directory_Info(Users *users, char *dirFilename,
   }
 
   // 디렉토리 정보 복원 보조 함수 호출
-  TreeNode *root = Load_Directory_Info_Helper(dirFile, dataFile, users);
+  TreeNode *root = LoadTree_Serve(dirFile, dataFile, users);
 
   fclose(dirFile);
   fclose(dataFile);
@@ -82,8 +80,7 @@ DirectTree *Load_Directory_Info(Users *users, char *dirFilename,
 }
 
 // 디렉토리 정보 복원 보조 함수
-TreeNode *Load_Directory_Info_Helper(FILE *dirFile, FILE *dataFile,
-                                     Users *users) {
+TreeNode *LoadTree_Serve(FILE *dirFile, FILE *dataFile, Users *users) {
   // 새로운 노드 생성
   int Is;
   printf("reading \n");
@@ -114,8 +111,8 @@ TreeNode *Load_Directory_Info_Helper(FILE *dirFile, FILE *dataFile,
     strcat(node->data, line);
   }
   // 자식 노드들에 대해 재귀 호출
-  node->child = Load_Directory_Info_Helper(dirFile, dataFile, users);
-  node->sib = Load_Directory_Info_Helper(dirFile, dataFile, users);
+  node->child = LoadTree_Serve(dirFile, dataFile, users);
+  node->sib = LoadTree_Serve(dirFile, dataFile, users);
   return node;
 }
 

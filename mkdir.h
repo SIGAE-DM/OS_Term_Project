@@ -5,22 +5,15 @@
 
 #pragma once
 
-#include "Permission.h"
-#include "option.h"
-#include "struct.h"
-#include <pthread.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
+#include "set_header.h"
 typedef struct MkdirThread {
   char dirName[50];
   DirectTree *dirtree;
-  UserNode *user;
+  Users *user;
 } MkdirThread;
 
 void make_dir(char *filename, char Type, TreeNode *parent, DirectTree *dirtree,
-              Users *usertree);
+              Users *usertree, int permission);
 void *create_dir_thread(void *arg);
 void mkdir(char *path, DirectTree *dirTree, Users *userTree);
 

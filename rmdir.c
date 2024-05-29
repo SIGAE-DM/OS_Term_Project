@@ -48,8 +48,8 @@ void *removeMultiThread(void *args) {
   return NULL;
 }
 
-void multi_rmdir(char **argument, int num, DirectTree *dirTree,
-                 Users *userlist) {
+void multiThreadRmdir(char **argument, int num, DirectTree *dirTree,
+                      Users *userlist) {
   pthread_t *threads = malloc(sizeof(pthread_t) * num);
   ThreadArg *threadArg = malloc(sizeof(ThreadArg) * num);
 

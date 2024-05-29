@@ -12,16 +12,16 @@ int *str2int(char mode) {
     static int change[3] = {1, 0, 1};
     return change;
   } else if (mode == '4') {
-    static int change[3] = {1, 1, 0};
+    static int change[3] = {1, 0, 0};
     return change;
   } else if (mode == '3') {
-    static int change[3] = {1, 1, 0};
+    static int change[3] = {0, 1, 1};
     return change;
   } else if (mode == '2') {
-    static int change[3] = {1, 1, 0};
+    static int change[3] = {0, 1, 0};
     return change;
   } else if (mode == '1') {
-    static int change[3] = {1, 1, 0};
+    static int change[3] = {0, 0, 1};
     return change;
   } else if (mode == '0') {
     static int change[3] = {0, 0, 0};
@@ -41,10 +41,7 @@ void chmod(DirectTree *dirtree, char *chmd) {
 
   if ('0' <= chmd[0] && chmd[0] <= '7') {
     cm_num = strtok(chmd, " ");
-    printf("cm_num : %s\n", cm_num);
-
     file = strtok(NULL, " ");
-    printf("file : %s\n", file);
 
     if (strlen(chmd) != 3) { //숫자3개아니면 error
       printf("Cannot change mode\n");

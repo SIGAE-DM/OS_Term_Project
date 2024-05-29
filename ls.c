@@ -44,32 +44,32 @@ void ls(char *argument, DirectTree *dirtree, Users *usertree) {
     return;
   }
 
-  if (!detail) { // -l이 아닐 때
+  if (!detail) {
 
-    if (hidden) { // -a 활성화
+    if (hidden) { // -a 일때
       printf(".\t");
       if (!(dirtree->current == dirtree->root)) {
         printf("..\t");
       }
     }
 
-    while (!(node == NULL)) { // sibling Node NULL�϶� �ݺ�
+    while (!(node == NULL)) { //형제 노드가 없을 때까지 loop
       if (!hidden) {
-        if (strncmp(node->name, ".", 1) == 0) { //� �¾�ϵ�
-          node = node->sib;                     //형제 노드 연결
+        if (strncmp(node->name, ".", 1) == 0) { //숨김 파일 출력 X
+          node = node->sib;                     // 다음 형제노드로 이동
           continue;
         }
       }
 
       printf("%s\t", node->name);
 
-      node = node->sib; //형제 노드 연결
+      node = node->sib; //다음 형제 노드로 이동
     }
     printf("\n");
   } else { // 상세 정보 확인
 
-    while (!(node == NULL)) { //-l�̰� Node� � sibling NULL�϶� �ݺ�
-      if (!hidden) {          //-l 비활성화
+    while (!(node == NULL)) { //형제 노드가 없을 때까지 loop
+      if (!hidden) {
         if (strncmp(node->name, ".", 1) == 0) {
           node = node->sib;
           continue;

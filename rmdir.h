@@ -11,7 +11,8 @@ typedef struct {
 } ThreadArg;
 
 void *removeMultiThread(void *arg);
-void multi_rmdir(char **argument, int num, DirectTree *dirtree,
-                 Users *userlist);
+
 void removedir(char *argument, DirectTree *dirtree, Users *userlist);
+
+void multiThreadRmdir(char **argument, int num, DirectTree *dirtree, Users *userlist);
 #endif
